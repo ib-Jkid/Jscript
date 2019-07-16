@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            * {
+            margin: 0;
+            padding: 0;
+            }
+            
+            body {
+                background-color: #000000;
+            }
+        
+            table {
+                border: #c98e89 2px solid;
+            }
+            tr {
+                height: 20px;
+            }
+            .field {
+                width: 20px;
+                background-color: black;
+                
+            }
+            .player1 {
+                background-color: red;
+            }
+            .player2 {
+                background-color: blue;
+            }
+            .food {
+                background-color: white;
+                border-radius: 10px;
+            }
+            p {
+                color: rgb(14, 177, 14);
+            }
+        </style>
+      
+    </head>
+    <body>
+        <script>
+            var interval = 50;
+            var gameOver = false;
+            var player1Moving = false;
+            var player2Moving = false;
+            var player1Dir;
+            var player2Dir;
+            var width = 20;
+            var height = 20;
+            var player1X = width/2;
+            var player1Y = 1;
+            var player2X = width/2;
+            var player2Y = width;
+            var foodX;
+            var foodY;
+            var maxScore = 20;
+            var key;
+            var p1;
+            var p2;
+            var food;
+            var player1Score = 0;
+            var player2Score = 0;
+            /***************************
+                DECLARES VARIABLE I.E AND CHECKS 
+                IF THE BROWSER IS INTERNET EXPLORER!!!
+
+            **************************/
+            var ie = (navigator.appName == "Microsoft Internet Explorer") ? true : false;
+            /*****************************
+                FUNCTION UPDATE CHANGES THE CLASS ATTRIBUTE 
+                OF THE TABLE DATA CONTAINING THE PLAYERS AND FOOD
+                OCCURS AT EVERY INTERVAL
+
+            *****************************/
+            update = function(p1,p2,food) {
+                p1.setAttribute("class","player1");
+                p2.setAttribute("class","player2");
+                food.setAttribute("class","food");
+               
+            }
+            /************************************
+                THE FUNCTION KEYPRESSED IS CALLED BY A KEYPRESS EVENT 
+                IT GETS THE CHAR OF THE KEY PRESSED AND COMPARES WITH 
+                THE DESIGNATED KEYS TO DETERMINE IF IT IS TO GO UP, DOWN ETC
+
+            **************************************/
+            function keypressed(e) {
+                if (ie) {
+                    e = window.event;
+                    key = e.keyCode;
+                } else {
+                    key = String.fromCharCode(e.charCode);
+
+                }
+                /************************************
+                    SWITCH STATEMENT FOR THE KEY VARIABLE AND
+                    CHANGES THE DIRECTION WITH THE FOLLOWING KEYS:
+                    -1 => UP
+                     1 => DOWN
+                    -2 => LEFT
+                     2 => RIGHT
+
+                *************************************/
+                switch (key) {
+                    case 'w':
+                        player1Dir = -1;
+                        break;
+                    case 'W':
+                        player1Dir = -1;
+                        break;
+                    case 'a':
+                        player1Dir = -2;
+                        break;
+                    case 'A':
+                        player1Dir = -2;
+                        break;
+                    case 's':
+                        player1Dir = 1;
+                        break;
+                    case 'S':
+                        player1Dir = 1;
+                        break;
+                    case 'd':
+                        player1Dir = 2;
+                        break;
+                    case 'D':
+                        player1Dir = 2;
+                        break;
+                    case 'i':
+                        player2Dir = -1;
+                        break;
+                    case 'I':
+                        player2Dir = -1;
+                        break;
+                    case 'j':
+                        player2Dir = -2;
+                        break;
+                    case 'J':
+                        player2Dir = -2;
+                        break;
+                    case 'k':
+                        player2Dir = 1;
+                        break;
+                    case 'K':
+                        player2Dir = 1;
+                        break;
+                    case 'l':
+                        player2Dir = 2;
+                        break;
+                    case 'L':
+                        player2Dir = 2;
+                        break;
+                }
+            }
+            /*********************************************
+                THE RUN FUNCTION UPDATES ALL MOVING PARTS 
+                AT THE INTERVAL SET
+
+            **********************************************/
+            run = function () {
+                /****************************************************************
+                    RETURNING THE PREVIOUS TABLE CELL OF THE PLAYERS TO ITS ORIGINAL
+                    ATTRIBUTE KNOWN AS THE FIELD WHICH WAS STRYLED ACCORDINGLY
+
+                ****************************************************************/
+                document.getElementById(player1X+","+player1Y).setAttribute("class","field");
+                document.getElementById(player2X+","+player2Y).setAttribute("class","field");
+                /****************************************************************
+                    THE SWITCH STATEMENT IMPROVES THE PLAYERS COORDINATE AT INTERVAL
+                    BASED ON THE DIRECTION
+
+                ****************************************************************/
+                switch(player1Dir) {
+                    case -1:
+                        if(player1Y > 1){
+                            player1Y--;
+                        }else {
+                            player1Moving = false;
+                        }
+                        break;
+                    case 1:
+                         if(player1Y < height){
+                            player1Y++;
+                        }else {
+                            player1Moving = false;
+                        }
+                        break; 
+                    case -2:
+                         if(player1X > 1){
+                            player1X--;
+                        }else {
+                            player1Moving = false;
+                        }
+                        break; 
+                    case 2:
+                         if(player1X < width){
+                            player1X++;
+                        }else {
+                            player1Moving = false;
+                        }
+                        break;
+                }
+
+                switch(player2Dir) {
+                    case -1:
+                        if(player2Y > 1){
+                            player2Y--;
+                        }else {
+                            player2Moving = false;
+                        }
+                        break;
+                    case 1:
+                         if(player2Y < height){
+                            player2Y++;
+                        }else {
+                            player2Moving = false;
+                        }
+                        break; 
+                    case -2:
+                         if(player2X > 1){
+                            player2X--;
+                        }else {
+                            player2Moving = false;
+                        }
+                        break; 
+                    case 2:
+                         if(player2X < width){
+                            player2X++;
+                        }else {
+                            player2Moving = false;
+                        }
+                        break;
+                }
+                /***********************************************************
+                    CHECKING TO SEE IF FOOD HAS BEEN SWALLOWED
+                    UPDATES THE SCORE AND CHANGES THE FOOD LOCATION
+
+                **************************************************************/
+                if (player1X == foodX && player1Y == foodY) {
+                    player1Score++;
+                    createFood();
+                }
+                if (player2X == foodX && player2Y == foodY) {
+                    player2Score++;
+                    createFood();
+                }
+                p1 = document.getElementById(player1X+","+player1Y);
+                p2 = document.getElementById(player2X+","+player2Y);
+                food = document.getElementById(foodX+","+foodY);
+                update(p1,p2,food);
+                /*******************************************************
+                    UPDATE THE SCORE ON THE SCREEN
+                *******************************************************/
+                document.getElementById("p1Score").innerHTML = player1Score;
+                document.getElementById("p2Score").innerHTML = player2Score;
+                /***********************************************************
+                    CHECKS TO SEE IF A PLAYER HAS REACHED THE MAXSCORE
+                    AND ALERTS THE WINNER
+                ****************************************************************/
+                if(player1Score == maxScore || player2Score == maxScore) {
+                    gameOver = true;
+                    if(player1Score > player2Score) {
+                        alert("player 1 wins!!!");
+                    }else {
+                        alert("player 2 wins!!!");
+                    }
+                }
+                
+
+            }
+            /**************************************************
+                CREATES FOOD RANDOMLY ON THE SCREEN AND CHECKS TO
+                SEE IF FOOD POSITION IS PLAYER POSITION
+
+            **************************************************/
+            createFood = function() {
+                do {
+                    foodX = Math.floor(Math.random()*20) +1;
+                    foodY = Math.floor(Math.random()*20) +1;
+                }while((foodX == player1X && foodY == player1Y) || (foodX == player2X && foodY == player2Y))
+            }
+            /***************************************************
+                DISPLAYS TO THE SCREEN
+
+            ****************************************************/
+            draw = function () {
+                document.write("<table>");
+                    for(y=1;y <= width; y++) {
+                        document.write("<tr>");
+                            for(x=1;x <= height; x++) {
+                                document.write("<td class='field' id='"+x+","+y+"'></td>");
+                            }
+                        document.write("</tr>");
+                    }
+
+                document.write("</table>");
+                document.write("<p>PLAYER 1: <span id='p1Score'></span></p>");
+                document.write("<p>PLAYER 2: <span id='p2Score'></span></p>");
+                
+
+                
+            }
+            /*************************************************
+                EVENT LISTENER FOR INTERNET EXPLORER AND OTHER
+                OTHER BROWSER AND IT CALLS THE FUNCTION KEYPRESSED
+
+            *************************************************/
+            if (!ie) {
+                document.addEventListener("keypress",keypressed);
+            }
+            document.onkeypress = keypressed;
+            
+            initialize = function () {
+                createFood();
+                draw();
+            }
+            loop = function () {
+                if(!gameOver) {
+                    run()
+                }
+                else {
+                    clearInterval(int);
+                }
+            }
+            
+            start = function () {
+                initialize();
+                var int = (setInterval(loop,interval));
+            }
+            start();
+
+            
+
+        </script>
+
+    </body>
+   
+</html>

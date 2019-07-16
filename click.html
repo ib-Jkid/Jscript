@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #container {
+                width: 700px;
+                height: 700px;
+                position: relative;
+                background-color: rgb(189, 173, 36);
+                
+            }
+            #box {
+                border-radius: 5px;
+                width: 20px;
+                height: 20px;
+                margin: 0;
+                padding: 0;
+                position: absolute;
+                background-color: brown;
+                color: blueviolet;
+            }
+        </style>
+    </head>
+<body>
+clicks <p id="clickleft"></p>
+<div id= "container">
+    <div id = "box">
+        
+    </div>
+</div>
+Score: <p id= "score"></p>
+
+<script type="text/javascript">
+    var run;
+    var click = 100;
+    var running = false;
+    var score = 0;
+    var speed = 1200;
+    var posX = 0;
+    var posY = 0;
+    var xdir = 1;
+    var ydir = 1;
+    var width = 700 - 20;
+    var height = 700 - 20;
+    var box = document.getElementById("box");
+    var scoreBox = document.getElementById("score");
+    var clicks = document.getElementById("clickleft");
+    window.onclick = function () {
+        if (running) {
+            if (click <= 0) {
+                gameOver();
+            }else {
+                click--;
+            }
+        } else {
+            start();
+
+        }
+        clicks.innerHTML = click;
+    }
+    box.onmouseover = function () {
+        box.style.backgroundColor = "blue";
+    }
+    box.onmouseout = function () {
+        box.style.backgroundColor = "brown";
+    }
+    box.onclick = function () {
+        box.style.backgroundColor = "pink";
+        score++;
+        switch (score) {
+            case 10: 
+                clearInterval(run);
+                speed = speed - 200;
+                start();
+                break;
+            case 20:
+                clearInterval(run);
+                speed = speed - 300;
+                start();
+                break;
+            case 30:
+                clearInterval(run);
+                speed = speed - 400;
+                start();
+                break;
+            case 40:
+                clearInterval(run);
+                speed = speed - 100;
+                start();
+                break;
+            case 50:
+                clearInterval(run);
+                speed = speed - 100;
+                start();
+                break;
+            case 60:
+                clearInterval(run);
+                speed = speed - 100;
+                start();
+                break;
+            case 70:
+                clearInterval(run);
+                speed = speed - 50;
+                start();
+                break;
+            case 80:
+                clearInterval(run);
+                speed = speed - 25;
+                start();
+                break;
+
+        }
+    }
+    function move () {
+
+        if(posX >= width) {
+            xdir = -1;
+        }
+        if(posX <= 0) {
+            xdir = 1;
+        }
+        if(posY >= height) {
+            ydir = -1;
+        }
+        if (posY <= 0) {
+            ydir = 1;
+        }
+
+        switch (xdir) {
+            case 1:
+                posX = posX + 15;
+                break;
+            case -1: 
+                posX = posX - 13;
+                break;
+        }
+        switch (ydir) {
+            case 1:
+                posY = posY + 11;
+                break;
+            case -1: 
+                posY = posY - 16;
+                break;
+        }
+        box.style.left = posX + "px";
+        box.style.top = posY + "px";
+        scoreBox.innerHTML = score;
+        
+    }
+    function start () {
+        running = true;
+        run = setInterval(move,speed);
+    }
+    function gameOver() {
+        clearInterval(run);
+        alert("Your Score: " + score);
+        speed = 1000;
+        score = 0;
+        click = 100;
+        running = false;
+    }
+
+</script>
+
+</body>
+</html>
+</html>
+
